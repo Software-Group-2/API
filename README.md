@@ -2,12 +2,6 @@
 
 We will use Node.js Express with MongoDB Architecture to make login and signup
 
-The backend will provide these APIs:
-
-Methods Urls Actions
-POST /api/auth/signup signup new account
-POST /api/auth/signin login an account
-POST /api/auth/signout logout the account
 
 ## requirements
 
