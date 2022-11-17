@@ -19,6 +19,8 @@ We will use Node.js Express with MongoDB Architecture to make login and signup
 npm install  --save
 
 
+```shell
 node server.js
+```
 
 open your bowser with url http://localhost:8080/
