@@ -14,7 +14,6 @@ MongoDB
 
 # Initialize setup
 
-mkdir node-js-express-login--mongodb
 cd node-js-express-login--mongodb
 
 npm init
