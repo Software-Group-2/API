@@ -15,7 +15,6 @@ We will use Node.js Express with MongoDB Architecture to make login and signup
 # Initialize setup
 
 
-npm init
 ```shell
 npm install  --save
 
