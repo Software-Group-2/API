@@ -16,7 +16,8 @@ We will use Node.js Express with MongoDB Architecture to make login and signup
 
 
 npm init
-npm install express mongoose cors cookie-session jsonwebtoken bcryptjs --save
+```shell
+npm install  --save
 
 ### inside the root folder, create a new server.js file
 
