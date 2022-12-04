@@ -35,6 +35,7 @@ jobs:
           coverage xml
     
     - name: 💅🏽 Analysing code lynter
+      continue-on-error: true
       run: |
         pylint api_app --recursive=y   
     
