@@ -42,7 +42,7 @@ class CreateUser(APIView):
 
 
 
-        return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'Bad Request': 'Username or email already exists'}, status=status.HTTP_403_FORBIDDEN)
 
             
 
@@ -56,7 +56,9 @@ class LoginUser(APIView):
             print(user,password)
             
             m = User.objects.get(username=user)
+            #print(m.password == password)
             matchcheck = check_password(password,m.password)
+            #print(matchcheck)
             if matchcheck:
                 self.request.session['member_id'] = m.id
                 return HttpResponse("You are logged in")
@@ -64,9 +66,9 @@ class LoginUser(APIView):
             else:
                 raise User.DoesNotExist
         except User.DoesNotExist:
-            return HttpResponse("Your username and password didn't match.")
+            return  Response({'Bad Request': 'username and password did not match'}, status=status.HTTP_403_FORBIDDEN)
         except:
-            return Response({'Bad Request': 'User already exists'}, status=status.HTTP_403_FORBIDDEN)
+            return Response({'Bad Request': 'Wrong input data'}, status=status.HTTP_400_BAD_REQUEST)
 
         
 
