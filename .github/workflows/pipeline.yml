@@ -35,9 +35,8 @@ jobs:
           coverage xml
     
     - name: 💅🏽 Analysing code lynter
-      continue-on-error: true
       run: |
-        pylint api_app/*.py 
+        pylint api_app --recursive=y   
     
     - name: 📠 SonarCloud Scan
       uses: SonarSource/sonarcloud-github-action@master
