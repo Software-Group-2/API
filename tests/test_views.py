@@ -9,7 +9,6 @@ class UserRegistration(APITestCase):
         url = "http://127.0.0.1:8000/api/register"
         data = {
             'username': 'benny22',
-            'first_name': 'benedikt',
             'email': 'benny@gmail.com',
             'password': 'unreveal',
         }
@@ -37,7 +36,6 @@ class UserLogin(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         register_data = {
             'username': 'benny22',
-            'first_name': 'benedikt',
             'email': 'benny@gmail.com',
             'password': 'unreveal',
         }

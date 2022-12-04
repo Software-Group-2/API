@@ -24,8 +24,6 @@ class CreateUser(APIView):
         if serializer.is_valid():
             print(serializer.data)
             username = serializer.data.get('username')
-            first_name = serializer.data.get('first_name')
-            print(first_name)
             email = serializer.data.get('email')
             password = serializer.data.get('password')
             queryset = User.objects.filter(username=username)
@@ -34,8 +32,7 @@ class CreateUser(APIView):
             if queryset.exists() or queryset2.exists():
                 return Response({'Bad Request': 'Username or email already exists'}, status=status.HTTP_403_FORBIDDEN)
             else:
-                user = User(username=username, first_name=first_name,
-                            email=email, password=password)
+                user = User(username=username,email=email, password=password)
                 user.save()
                 self.request.session['member_id'] = user.id
                 return Response(CreateUserSerializer(user).data, status=status.HTTP_201_CREATED)
