@@ -8,9 +8,9 @@ class UserRegistration(APITestCase):
     def test_create_account(self):
         url = "http://127.0.0.1:8000/api/register"
         data = {
-            'username': 'benny22',
-            'email': 'benny@gmail.com',
-            'password': 'unreveal',
+            "username": "benny22",
+            "email": "benny@gmail.com",
+            "password": "unreveal"
         }
 
         response = self.client.post(url, data, format='json')
@@ -28,25 +28,25 @@ class UserLogin(APITestCase):
         register_url = "http://127.0.0.1:8000/api/register"
 
         data = {
-            'username': 'benny22',
-            'password': 'unreveal',
-        }
-        response = self.client.post(url, data, format='json')
+            "username": "benny22",
+            "password": "unreveal"
+            }
+        response = self.client.post(url, data, format="json")
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         register_data = {
-            'username': 'benny22',
-            'email': 'benny@gmail.com',
-            'password': 'unreveal',
-        }
+            "username": "benny22",
+            "email": "benny@gmail.com",
+            "password": "unreveal"
+            }
 
         response1 = self.client.post(
-            register_url, register_data, format='json')
+            register_url, register_data, format="json")
 
         self.assertEqual(response1.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(len(User.objects.filter(username='benny22')), 1)
+        self.assertEqual(len(User.objects.filter(username="benny22")), 1)
 
-        response2 = self.client.post(url, data, format='json')
+        response2 = self.client.post(url, data, format="json")
 
         # In reality this test should produce the result b"You are logged in"
 
