@@ -48,14 +48,8 @@ class UserLogin(APITestCase):
 
         response2 = self.client.post(url, data, format="json")
 
-        # In reality this test should produce the result b"You are logged in"
-
-        # I use a in built django function called check_password(input,password) to check if they match. But this won't work for this test as the password is the plain password value and django will try to match password with the encrypted input
-
-        # So it fails as how testing in memory is implemented but with our actual database this does in fact produce you are logged in
-
         self.assertEqual(
-            response2.content, b'{"Bad Request":"username and password did not match"}')
+            response2.content,  b"You are logged in")
 
 
 class UserLogout(APITestCase):
