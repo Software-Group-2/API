@@ -7,7 +7,7 @@ from rest_framework.response import Response
 
 
 from django.contrib.auth.models import User
-from django.contrib.auth.hashers import check_password
+from django.contrib.auth.hashers import check_password,make_password
 from .serializers import CreateUserSerializer
 
 
@@ -33,7 +33,7 @@ class CreateUser(APIView):
             #queryset = User.objects.filter(username=username)
             #queryset2 = User.objects.filter(email=email)
 
-            user = User(username=username,email=email, password=password)
+            user = User(username=username,email=email, password=make_password(password))
             user.save()
             self.request.session['member_id'] = user.id
             return Response(CreateUserSerializer(user).data,
