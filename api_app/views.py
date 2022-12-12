@@ -4,12 +4,12 @@ from rest_framework import status
 from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
+import git
 
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import check_password,make_password
 from .serializers import CreateUserSerializer,LoginUserSerializer
-import git
+
 
 
 
