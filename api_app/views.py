@@ -8,7 +8,8 @@ from rest_framework.response import Response
 
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import check_password,make_password
-from .serializers import CreateUserSerializer,LoginUserSerializer
+from .serializers import CreateUserSerializer,LoginUserSerializer,AddPlaceSerializer
+from .models import Place
 
 
 
@@ -81,3 +82,37 @@ class LogoutUser(APIView):
             pass
 
         return HttpResponse("You're logged out.")
+
+
+
+class CreatePlace(APIView):
+    serializer_class = AddPlaceSerializer
+
+    def post(self, request, format=None):
+        """ post request to create a place"""
+
+        serializer = self.serializer_class(data=request.data)
+
+        # only username is unique email is not checked for uniqueness
+        # maybe change this later
+        if serializer.is_valid():
+
+            latitude = serializer.data.get('latitude')
+            longitude = serializer.data.get('longitude')
+            place = serializer.data.get('place')
+            description = serializer.data.get('description')
+            label = serializer.data.get('label')
+            print(serializer.data)
+
+            #queryset = User.objects.filter(username=username)
+            #queryset2 = User.objects.filter(email=email)
+
+
+            place = Place(latitude=latitude,longitude=longitude, place=place,description=description,label=label)
+            place.save()
+
+            return Response(AddPlaceSerializer(place).data,
+                            status=status.HTTP_201_CREATED)
+
+        return Response({'Bad Request': 'Place: Invalid inputs'},
+        status=status.HTTP_403_FORBIDDEN)
