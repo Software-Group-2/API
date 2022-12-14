@@ -134,7 +134,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "https://www.test-cors.org",
     "http://localhost:19006"
-    "https://ws22-23-swepm3ilv-inf-ba-vz-group-2.github.io/App"
+    "https://ws22-23-swepm3ilv-inf-ba-vz-group-2.github.io"
 ]
 
 CSRF_TRUSTED_ORIGINS = [
