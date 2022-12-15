@@ -78,3 +78,39 @@ class AddPlaceTest(APITestCase):
 
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+class AddCommentTest(APITestCase):
+    def test_create_account(self):
+        url = "http://127.0.0.1:8000/api/addComment"
+        data = {
+            "post_id": "1",
+            "sender_id": "5b",
+            "comment": "Hi im here for testing",
+
+        }
+
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+class GetCommentTest(APITestCase):
+    def test_create_account(self):
+        url = "http://127.0.0.1:8000/api/addComment"
+        data = {
+            "post_id": "1",
+            "sender_id": "5b",
+            "comment": "Hi im here for testing",
+
+        }
+
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        url = "http://127.0.0.1:8000/api/get_comment?place_id=1"
+
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        
