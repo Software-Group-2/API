@@ -18,3 +18,8 @@ class AddPlaceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Place
         fields = ['user_id','latitude', 'longitude','place', 'description', 'label']
+
+class PlaceViewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Place
+        fields = ['place','latitude', 'longitude', 'description', 'label']

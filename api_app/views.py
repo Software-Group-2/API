@@ -8,7 +8,7 @@ import git
 
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import check_password,make_password
-from .serializers import CreateUserSerializer,LoginUserSerializer,AddPlaceSerializer
+from .serializers import *
 from .models import Place
 
 
@@ -110,11 +110,11 @@ class CreatePlace(APIView):
             #queryset2 = User.objects.filter(email=email)
 
 
-            place = Place(user_id=user_id,latitude=latitude,longitude=longitude, 
+            place_table = Place(user_id=user_id,latitude=latitude,longitude=longitude, 
             place=place,description=description,label=label)
-            place.save()
+            place_table.save()
 
-            return Response(AddPlaceSerializer(place).data,
+            return Response(AddPlaceSerializer(place_table).data,
                             status=status.HTTP_201_CREATED)
 
         return Response({'Bad Request': 'Place: Invalid inputs'},
@@ -129,3 +129,26 @@ class WebHook(APIView):
         origin.pull()
         return '', 200
     
+
+class GetUserData(APIView):
+
+    def get(self, request, format=None):
+        """get request to get the data of the user given his username"""
+        try:
+            username = self.request.query_params.get('username')
+            user_object = User.objects.get(username=username)
+            user_places = Place.objects.filter(user_id=username)
+            places = []
+            for i in user_places:
+                places.append(PlaceViewSerializer(i).data)
+            
+            return Response({'id':self.request.session['member_id'],'username':user_object.username,
+                            'email':user_object.email,'places':places},status=status.HTTP_200_OK)
+
+            #return Response({'id':self.request.session['member_id'],
+            # 'username':user_object.username,
+            # 'email':user_object.email,},status=status.HTTP_200_OK)
+        except:
+            return Response({'Bad Request': 'No user with this username in Database'},
+            status = status.HTTP_404_NOT_FOUND)
+            
