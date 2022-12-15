@@ -5,6 +5,8 @@ from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 import git
+from drf_yasg.utils import swagger_auto_schema
+
 
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import check_password,make_password
@@ -20,7 +22,7 @@ from .models import Place,Comment
 
 class CreateUser(APIView):
     serializer_class = CreateUserSerializer
-
+    @swagger_auto_schema(responses={201: serializer_class(many=True)})
     def post(self, request, format=None):
         """ post request to register user"""
 
@@ -48,6 +50,7 @@ class CreateUser(APIView):
 
 class LoginUser(APIView):
     serializer_class = LoginUserSerializer
+    @swagger_auto_schema(responses={200: serializer_class(many=True)})
 
     def post(self, request, format=None):
         """post request to login user"""
@@ -89,6 +92,7 @@ class LogoutUser(APIView):
 
 class CreatePlace(APIView):
     serializer_class = AddPlaceSerializer
+    @swagger_auto_schema(responses={201: serializer_class(many=True)})
 
     def post(self, request, format=None):
         """ post request to create a place"""
@@ -123,6 +127,7 @@ class CreatePlace(APIView):
 
 class CreateComment(APIView):
     serializer_class = AddCommentSerializer
+    @swagger_auto_schema(responses={201: serializer_class(many=True)})
 
     def post(self, request, format=None):
         """ post request to create a place"""
@@ -169,6 +174,7 @@ class GetCommentsData(APIView):
 
 
 class WebHook(APIView):
+    swagger_schema = None
     def post(self, request, format=None):
         """ Webhook to pull the code from github to the backend server"""
         repo = git.Repo('./API')
