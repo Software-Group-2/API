@@ -7,7 +7,7 @@ from rest_framework.response import Response
 import git
 from drf_yasg.utils import swagger_auto_schema
 
-
+from django.core import management
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import check_password,make_password
 from .serializers import CreateUserSerializer,LoginUserSerializer
@@ -173,6 +173,7 @@ class GetCommentsData(APIView):
             status = status.HTTP_404_NOT_FOUND)
 
 
+
 class WebHook(APIView):
     swagger_schema = None
     def post(self, request, format=None):
@@ -181,6 +182,8 @@ class WebHook(APIView):
         origin = repo.remotes.origin
         repo.create_head('main', origin.refs.main).set_tracking_branch(origin.refs.main).checkout()
         origin.pull()
+        management.call_command("collectstatic")
+
         return '', 200
 
 class GetUserData(APIView):
