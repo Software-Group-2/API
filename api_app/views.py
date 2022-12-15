@@ -8,8 +8,9 @@ import git
 
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import check_password,make_password
-from .serializers import CreateUserSerializer,LoginUserSerializer,AddPlaceSerializer
-from .models import Place
+from .serializers import CreateUserSerializer,LoginUserSerializer
+from .serializers import AddPlaceSerializer,AddCommentSerializer
+from .models import Place,Comment
 
 
 
@@ -110,15 +111,62 @@ class CreatePlace(APIView):
             #queryset2 = User.objects.filter(email=email)
 
 
-            place = Place(user_id=user_id,latitude=latitude,longitude=longitude, 
+            place_table = Place(user_id=user_id,latitude=latitude,longitude=longitude, 
             place=place,description=description,label=label)
-            place.save()
+            place_table.save()
 
-            return Response(AddPlaceSerializer(place).data,
+            return Response(AddPlaceSerializer(place_table).data,
                             status=status.HTTP_201_CREATED)
 
         return Response({'Bad Request': 'Place: Invalid inputs'},
         status=status.HTTP_403_FORBIDDEN)
+
+class CreateComment(APIView):
+    serializer_class = AddCommentSerializer
+
+    def post(self, request, format=None):
+        """ post request to create a place"""
+
+        serializer = self.serializer_class(data=request.data)
+
+        # only username is unique email is not checked for uniqueness
+        # maybe change this later
+        if serializer.is_valid():
+
+            post_id = serializer.data.get('post_id')
+            sender_id = serializer.data.get('sender_id')
+            comment = serializer.data.get('comment')
+            print(serializer.data)
+
+            #queryset = User.objects.filter(username=username)
+            #queryset2 = User.objects.filter(email=email)
+
+
+            commnet_table = Comment(post_id=post_id,sender_id=sender_id,comment=comment)
+            commnet_table.save()
+
+            return Response(AddCommentSerializer(commnet_table).data,
+                            status=status.HTTP_201_CREATED)
+
+        return Response({'Bad Request': 'Place: Invalid inputs'},
+        status=status.HTTP_403_FORBIDDEN)
+
+class GetCommentsData(APIView):
+
+    def get(self, request, format=None):
+        """get request to get the comments of a post given the post id"""
+        try:
+            place_id = self.request.query_params.get('place_id')
+            comment_places = Comment.objects.filter(post_id=place_id)
+            comments = []
+            for i in comment_places:
+                comments.append(AddCommentSerializer(i).data)
+            
+            return Response({'comments':comments},status=status.HTTP_200_OK)
+        except:
+            return Response({'Bad Request': 'No post with this id in Database'},
+            status = status.HTTP_404_NOT_FOUND)
+
 
 class WebHook(APIView):
     def post(self, request, format=None):
