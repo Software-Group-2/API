@@ -65,7 +65,7 @@ class AddPlaceTest(APITestCase):
     def test_create_account(self):
         url = "http://127.0.0.1:8000/api/addPlace"
         data = {
-            "user_id": "benny",
+            "username": "benny",
             "latitude": "1234657865",
             "longitude": "456786754",
             "place": "caffee",
@@ -132,7 +132,7 @@ class GetUserTest(APITestCase):
 
         url_p = "http://127.0.0.1:8000/api/addPlace"
         data_p = {
-            "user_id": "tom",
+            "username": "tom",
             "latitude": "1234657865",
             "longitude": "456786754",
             "place": "caffee",

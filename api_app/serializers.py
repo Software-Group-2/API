@@ -17,7 +17,7 @@ class LoginUserSerializer(serializers.ModelSerializer):
 class AddPlaceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Place
-        fields = ['user_id','latitude', 'longitude','place', 'description', 'label']
+        fields = ['username','latitude', 'longitude','place', 'description', 'label']
 
 class AddCommentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -28,4 +28,3 @@ class PlaceViewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Place
         fields = ['place','latitude', 'longitude', 'description', 'label']
-        

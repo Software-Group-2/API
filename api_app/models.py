@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 # Create your models here.
 class Place(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user_id = models.CharField(max_length=100)
+    username = models.CharField(max_length=100)
     latitude = models.CharField(max_length=100)
     longitude = models.CharField(max_length=100)
     place = models.CharField(max_length=100)
