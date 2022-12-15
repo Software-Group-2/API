@@ -108,7 +108,8 @@ class CreatePlace(APIView):
             #queryset2 = User.objects.filter(email=email)
 
 
-            place = Place(latitude=latitude,longitude=longitude, place=place,description=description,label=label)
+            place = Place(latitude=latitude,longitude=longitude, 
+            place=place,description=description,label=label)
             place.save()
 
             return Response(AddPlaceSerializer(place).data,
