@@ -10,7 +10,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.hashers import check_password,make_password
 from .serializers import CreateUserSerializer,LoginUserSerializer
 from .serializers import AddPlaceSerializer,AddCommentSerializer,PlaceViewSerializer
-from .models import Place,Comment
+from .serializers import AddRatingSerializer
+from .models import Place,Comment,Rating
 
 
 
@@ -151,10 +152,36 @@ class CreateComment(APIView):
         return Response({'Bad Request': 'Place: Invalid inputs'},
         status=status.HTTP_403_FORBIDDEN)
 
+class CreateRating(APIView):
+    serializer_class = AddRatingSerializer
+
+    def post(self, request, format=None):
+        """ post request to create a rating"""
+
+        serializer = self.serializer_class(data=request.data)
+
+        # only username is unique email is not checked for uniqueness
+        # maybe change this later
+        if serializer.is_valid():
+
+            post_id = serializer.data.get('post_id')
+            sender_id = serializer.data.get('sender_id')
+            rating = serializer.data.get('rating')
+            print(serializer.data)
+
+            rating_table = Rating(post_id=post_id,sender_id=sender_id,rating=rating)
+            rating_table.save()
+
+            return Response(AddRatingSerializer(rating_table).data,
+                            status=status.HTTP_201_CREATED)
+
+        return Response({'Bad Request': 'Place: Invalid inputs'},
+        status=status.HTTP_403_FORBIDDEN)
+
 class GetCommentsData(APIView):
 
     def get(self, request, format=None):
-        """get request to get the comments of a post given the post id"""
+        """get request to get the ratings of a post given the post id"""
         try:
             place_id = self.request.query_params.get('place_id')
             comment_places = Comment.objects.filter(post_id=place_id)
@@ -163,6 +190,22 @@ class GetCommentsData(APIView):
                 comments.append(AddCommentSerializer(i).data)
             
             return Response({'comments':comments},status=status.HTTP_200_OK)
+        except:
+            return Response({'Bad Request': 'No post with this id in Database'},
+            status = status.HTTP_404_NOT_FOUND)
+
+class GetRatingData(APIView):
+
+    def get(self, request, format=None):
+        """get request to get the comments of a post given the post id"""
+        try:
+            place_id = self.request.query_params.get('place_id')
+            rating_places = Rating.objects.filter(post_id=place_id)
+            ratings = []
+            for i in rating_places:
+                ratings.append(AddRatingSerializer(i).data)
+            
+            return Response({'ratings':ratings},status=status.HTTP_200_OK)
         except:
             return Response({'Bad Request': 'No post with this id in Database'},
             status = status.HTTP_404_NOT_FOUND)

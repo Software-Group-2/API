@@ -20,3 +20,9 @@ class Comment(models.Model):
     post_id = models.CharField(max_length=100)
     sender_id = models.CharField(max_length=100)
     comment = models.CharField(max_length=500)
+
+class Rating(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    post_id = models.CharField(max_length=100)
+    sender_id = models.CharField(max_length=100)
+    rating = models.DecimalField(max_digits=6, decimal_places=3)

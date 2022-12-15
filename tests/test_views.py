@@ -113,6 +113,37 @@ class GetCommentTest(APITestCase):
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+class AddRatingTest(APITestCase):
+    def test_create_account(self):
+        url = "http://127.0.0.1:8000/api/addRating"
+        data = {
+            "post_id": "1",
+            "sender_id": "5b",
+            "rating": 5.43,
+        }
+
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+class GetRatingTest(APITestCase):
+    def test_create_account(self):
+        url = "http://127.0.0.1:8000/api/addRating"
+        data = {
+            "post_id": "1",
+            "sender_id": "5b",
+            "rating": 5.43,
+        }
+
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        url = "http://127.0.0.1:8000/api/get_rating?place_id=1"
+
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 class GetUserTest(APITestCase):
     def test_create_account(self):

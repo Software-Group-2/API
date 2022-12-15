@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Place,Comment
+from .models import Place,Comment,Rating
 
 class CreateUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -28,3 +28,8 @@ class PlaceViewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Place
         fields = ['place','latitude', 'longitude', 'description', 'label']
+
+class AddRatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rating
+        fields = ['post_id', 'sender_id','rating']
