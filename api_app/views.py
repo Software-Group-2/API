@@ -4,12 +4,13 @@ from rest_framework import status
 from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
+import git
 
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import check_password,make_password
 from .serializers import CreateUserSerializer,LoginUserSerializer,AddPlaceSerializer
 from .models import Place
+
 
 
 
@@ -117,3 +118,14 @@ class CreatePlace(APIView):
 
         return Response({'Bad Request': 'Place: Invalid inputs'},
         status=status.HTTP_403_FORBIDDEN)
+
+class WebHook(APIView):
+    def post(self, request, format=None):
+        """ Webhook to pull the code from github to the backend server"""
+        repo = git.Repo('./API')
+        origin = repo.remotes.origin
+        repo.create_head('main', origin.refs.main).set_tracking_branch(origin.refs.main).checkout()
+        origin.pull()
+        return '', 200
+    
+
