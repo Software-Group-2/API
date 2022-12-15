@@ -23,3 +23,9 @@ class AddCommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ['post_id', 'sender_id','comment']
+
+class PlaceViewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Place
+        fields = ['place','latitude', 'longitude', 'description', 'label']
+        

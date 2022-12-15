@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import CreateUser, LoginUser, LogoutUser
+from .views import CreateUser, LoginUser, LogoutUser,GetUserData
 from .views import CreatePlace,WebHook,CreateComment,GetCommentsData
 
 urlpatterns = [
@@ -11,4 +11,5 @@ urlpatterns = [
     path("addComment", CreateComment.as_view()),
     path("get_comment", GetCommentsData.as_view()),
     path("git_update", WebHook.as_view()),
+    path("get_user", GetUserData.as_view()),
 ]

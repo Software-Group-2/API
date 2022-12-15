@@ -113,4 +113,38 @@ class GetCommentTest(APITestCase):
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        
+
+class GetUserTest(APITestCase):
+    def test_create_account(self):
+        url = "http://127.0.0.1:8000/api/get_user?username=tom"
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        url_r = "http://127.0.0.1:8000/api/register"
+        data_r = {
+            "username": "tom",
+            "email": "benny@gmail.com",
+            "password": "unreveal"
+        }
+
+        response_r = self.client.post(url_r, data_r, format='json')
+        self.assertEqual(response_r.status_code, status.HTTP_201_CREATED)
+
+        url_p = "http://127.0.0.1:8000/api/addPlace"
+        data_p = {
+            "user_id": "tom",
+            "latitude": "1234657865",
+            "longitude": "456786754",
+            "place": "caffee",
+            "description": "best caffee in berlin",
+            "label": "caffe;relax;fun",
+        }
+
+        response_p = self.client.post(url_p, data_p, format='json')
+        self.assertEqual(response_p.status_code, status.HTTP_201_CREATED)
+
+
+        url = "http://127.0.0.1:8000/api/get_user?username=tom"
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
