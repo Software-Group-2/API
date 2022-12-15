@@ -98,6 +98,7 @@ class CreatePlace(APIView):
         # maybe change this later
         if serializer.is_valid():
 
+            user_id = serializer.data.get('user_id')
             latitude = serializer.data.get('latitude')
             longitude = serializer.data.get('longitude')
             place = serializer.data.get('place')
@@ -109,7 +110,7 @@ class CreatePlace(APIView):
             #queryset2 = User.objects.filter(email=email)
 
 
-            place = Place(latitude=latitude,longitude=longitude, 
+            place = Place(user_id=user_id,latitude=latitude,longitude=longitude, 
             place=place,description=description,label=label)
             place.save()
 

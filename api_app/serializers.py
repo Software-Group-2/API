@@ -17,4 +17,4 @@ class LoginUserSerializer(serializers.ModelSerializer):
 class AddPlaceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Place
-        fields = ['latitude', 'longitude','place', 'description', 'label']
+        fields = ['user_id','latitude', 'longitude','place', 'description', 'label']

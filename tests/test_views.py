@@ -1,7 +1,8 @@
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-from api_app.models import User
+from api_app.models import User,Place
+
 
 
 class UserRegistration(APITestCase):
@@ -58,3 +59,22 @@ class UserLogout(APITestCase):
 
         response = self.client.post(url, {}, format='json')
         self.assertEqual(response.content, b"You're logged out.")
+
+
+class AddPlaceTest(APITestCase):
+    def test_create_account(self):
+        url = "http://127.0.0.1:8000/api/addPlace"
+        data = {
+            "user_id": "benny",
+            "latitude": "1234657865",
+            "longitude": "456786754",
+            "place": "caffee",
+            "description": "best caffee in berlin",
+            "label": "caffe;relax;fun",
+        }
+
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
