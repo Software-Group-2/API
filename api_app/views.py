@@ -1,6 +1,6 @@
 from rest_framework import status
-#from django.http import JsonResponse
-#from django.http import HttpResponseRedirect
+# from django.http import JsonResponse
+# from django.http import HttpResponseRedirect
 from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -30,8 +30,8 @@ class CreateUser(APIView):
             username = serializer.data.get('username')
             email = serializer.data.get('email')
             password = serializer.data.get('password')
-            #queryset = User.objects.filter(username=username)
-            #queryset2 = User.objects.filter(email=email)
+            # queryset = User.objects.filter(username=username)
+            # queryset2 = User.objects.filter(email=email)
 
             user = User(username=username, email=email,
                         password=make_password(password))
@@ -49,14 +49,14 @@ class LoginUser(APIView):
 
     def post(self, request, format=None):
         """post request to login user"""
-        #serializer = self.serializer_class(data=request.data)
+        # serializer = self.serializer_class(data=request.data)
         try:
             user = request.data['username']
             password = request.data['password']
             print(user, password)
 
             user_object = User.objects.get(username=user)
-            #print(user_object.password == password)
+            # print(user_object.password == password)
             matchcheck = check_password(password, user_object.password)
             # print(matchcheck)
             if matchcheck:
@@ -95,7 +95,6 @@ class CreatePlace(APIView):
         # only username is unique email is not checked for uniqueness
         # maybe change this later
         if serializer.is_valid():
-
             username = serializer.data.get('username')
             latitude = serializer.data.get('latitude')
             longitude = serializer.data.get('longitude')
@@ -104,8 +103,8 @@ class CreatePlace(APIView):
             label = serializer.data.get('label')
             print(serializer.data)
 
-            #queryset = User.objects.filter(username=username)
-            #queryset2 = User.objects.filter(email=email)
+            # queryset = User.objects.filter(username=username)
+            # queryset2 = User.objects.filter(email=email)
 
             place_table = Place(username=username, latitude=latitude, longitude=longitude,
                                 place=place, description=description, label=label)
@@ -129,14 +128,13 @@ class CreateComment(APIView):
         # only username is unique email is not checked for uniqueness
         # maybe change this later
         if serializer.is_valid():
-
             post_id = serializer.data.get('post_id')
             sender_id = serializer.data.get('sender_id')
             comment = serializer.data.get('comment')
             print(serializer.data)
 
-            #queryset = User.objects.filter(username=username)
-            #queryset2 = User.objects.filter(email=email)
+            # queryset = User.objects.filter(username=username)
+            # queryset2 = User.objects.filter(email=email)
 
             commnet_table = Comment(
                 post_id=post_id, sender_id=sender_id, comment=comment)
@@ -189,8 +187,14 @@ class GetUserData(APIView):
             for i in user_places:
                 places.append(PlaceViewSerializer(i).data)
 
-            return Response({'id': user_object.id, 'username': user_object.username,
-                            'email': user_object.email, 'places': places}, status=status.HTTP_200_OK)
+            return Response(
+                {
+                    'id': user_object.id,
+                    'username': user_object.username,
+                    'email': user_object.email,
+                    'places': places},
+                status=status.HTTP_200_OK
+            )
 
             # return Response({'id':self.request.session['member_id'],
             # 'username':user_object.username,
