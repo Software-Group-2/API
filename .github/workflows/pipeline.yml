@@ -37,8 +37,10 @@ jobs:
     - name: 💅🏽 Analysing code linter
       run: |
         pylint api_app --rcfile=.pylintrc --recursive=y
-        pep8 api_app
-        pep8 API  
+    
+    - name: 🎀 Check PEP8 rules api_app
+      run: |
+         pep8 api_app API
     
     - name: 📠 SonarCloud Scan
       uses: SonarSource/sonarcloud-github-action@master
