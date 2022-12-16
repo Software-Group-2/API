@@ -1,7 +1,7 @@
 from django.urls import path
 
-from .views import CreateUser, LoginUser, LogoutUser,GetUserData
-from .views import CreatePlace,WebHook,CreateComment,GetCommentsData
+from .views import CreateUser, LoginUser, LogoutUser, GetUserData
+from .views import CreatePlace, WebHook, CreateComment, GetCommentsData
 
 urlpatterns = [
     path("register", CreateUser.as_view()),

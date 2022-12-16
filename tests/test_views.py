@@ -1,8 +1,7 @@
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-from api_app.models import User,Place
-
+from api_app.models import User, Place
 
 
 class UserRegistration(APITestCase):
@@ -31,7 +30,7 @@ class UserLogin(APITestCase):
         data = {
             "username": "benny22",
             "password": "unreveal"
-            }
+        }
         response = self.client.post(url, data, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -39,7 +38,7 @@ class UserLogin(APITestCase):
             "username": "benny22",
             "email": "benny@gmail.com",
             "password": "unreveal"
-            }
+        }
 
         response1 = self.client.post(
             register_url, register_data, format="json")
@@ -79,6 +78,7 @@ class AddPlaceTest(APITestCase):
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+
 class AddCommentTest(APITestCase):
     def test_create_account(self):
         url = "http://127.0.0.1:8000/api/addComment"
@@ -94,6 +94,7 @@ class AddCommentTest(APITestCase):
 
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
 
 class GetCommentTest(APITestCase):
     def test_create_account(self):
@@ -143,8 +144,6 @@ class GetUserTest(APITestCase):
         response_p = self.client.post(url_p, data_p, format='json')
         self.assertEqual(response_p.status_code, status.HTTP_201_CREATED)
 
-
         url = "http://127.0.0.1:8000/api/get_user?username=tom"
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-

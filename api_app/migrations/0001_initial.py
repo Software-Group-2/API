@@ -4,7 +4,6 @@ import uuid
 from django.db import migrations, models
 
 
-
 class Migration(migrations.Migration):
 
     initial = True
@@ -16,8 +15,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Comment',
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, 
-                editable=False, primary_key=True, serialize=False)),
+                ('id', models.UUIDField(default=uuid.uuid4,
+                                        editable=False, primary_key=True, serialize=False)),
                 ('post_id', models.CharField(max_length=100)),
                 ('sender_id', models.CharField(max_length=100)),
                 ('comment', models.CharField(max_length=500)),
@@ -26,8 +25,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Place',
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, 
-                editable=False, primary_key=True, serialize=False)),
+                ('id', models.UUIDField(default=uuid.uuid4,
+                                        editable=False, primary_key=True, serialize=False)),
                 ('user_id', models.CharField(max_length=100)),
                 ('latitude', models.CharField(max_length=100)),
                 ('longitude', models.CharField(max_length=100)),

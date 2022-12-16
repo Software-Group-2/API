@@ -7,13 +7,10 @@ from rest_framework.response import Response
 import git
 
 from django.contrib.auth.models import User
-from django.contrib.auth.hashers import check_password,make_password
-from .serializers import CreateUserSerializer,LoginUserSerializer
-from .serializers import AddPlaceSerializer,AddCommentSerializer,PlaceViewSerializer
-from .models import Place,Comment
-
-
-
+from django.contrib.auth.hashers import check_password, make_password
+from .serializers import CreateUserSerializer, LoginUserSerializer
+from .serializers import AddPlaceSerializer, AddCommentSerializer, PlaceViewSerializer
+from .models import Place, Comment
 
 
 # POST Requests
@@ -36,14 +33,15 @@ class CreateUser(APIView):
             #queryset = User.objects.filter(username=username)
             #queryset2 = User.objects.filter(email=email)
 
-            user = User(username=username,email=email, password=make_password(password))
+            user = User(username=username, email=email,
+                        password=make_password(password))
             user.save()
             self.request.session['member_id'] = user.id
             return Response(CreateUserSerializer(user).data,
                             status=status.HTTP_201_CREATED)
 
         return Response({'Bad Request': 'Username already exists or Invalid inputs'},
-        status=status.HTTP_403_FORBIDDEN)
+                        status=status.HTTP_403_FORBIDDEN)
 
 
 class LoginUser(APIView):
@@ -64,13 +62,13 @@ class LoginUser(APIView):
             if matchcheck:
                 self.request.session['member_id'] = user_object.id
                 return HttpResponse("You are logged in")
-                #return HttpResponseRedirect('/you-are-logged-in/')
-        
+                # return HttpResponseRedirect('/you-are-logged-in/')
+
             return Response({'Bad Request': 'username and password did not match'},
-                        status=status.HTTP_403_FORBIDDEN)
+                            status=status.HTTP_403_FORBIDDEN)
 
         except:
-            return Response({'Bad Request': 'Either user is not in Database or Invalid input'}, 
+            return Response({'Bad Request': 'Either user is not in Database or Invalid input'},
                             status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -84,7 +82,6 @@ class LogoutUser(APIView):
             pass
 
         return HttpResponse("You're logged out.")
-
 
 
 class CreatePlace(APIView):
@@ -110,16 +107,16 @@ class CreatePlace(APIView):
             #queryset = User.objects.filter(username=username)
             #queryset2 = User.objects.filter(email=email)
 
-
-            place_table = Place(username=username,latitude=latitude,longitude=longitude, 
-            place=place,description=description,label=label)
+            place_table = Place(username=username, latitude=latitude, longitude=longitude,
+                                place=place, description=description, label=label)
             place_table.save()
 
             return Response(AddPlaceSerializer(place_table).data,
                             status=status.HTTP_201_CREATED)
 
         return Response({'Bad Request': 'Place: Invalid inputs'},
-        status=status.HTTP_403_FORBIDDEN)
+                        status=status.HTTP_403_FORBIDDEN)
+
 
 class CreateComment(APIView):
     serializer_class = AddCommentSerializer
@@ -141,15 +138,16 @@ class CreateComment(APIView):
             #queryset = User.objects.filter(username=username)
             #queryset2 = User.objects.filter(email=email)
 
-
-            commnet_table = Comment(post_id=post_id,sender_id=sender_id,comment=comment)
+            commnet_table = Comment(
+                post_id=post_id, sender_id=sender_id, comment=comment)
             commnet_table.save()
 
             return Response(AddCommentSerializer(commnet_table).data,
                             status=status.HTTP_201_CREATED)
 
         return Response({'Bad Request': 'Place: Invalid inputs'},
-        status=status.HTTP_403_FORBIDDEN)
+                        status=status.HTTP_403_FORBIDDEN)
+
 
 class GetCommentsData(APIView):
 
@@ -161,11 +159,11 @@ class GetCommentsData(APIView):
             comments = []
             for i in comment_places:
                 comments.append(AddCommentSerializer(i).data)
-            
-            return Response({'comments':comments},status=status.HTTP_200_OK)
+
+            return Response({'comments': comments}, status=status.HTTP_200_OK)
         except:
             return Response({'Bad Request': 'No post with this id in Database'},
-            status = status.HTTP_404_NOT_FOUND)
+                            status=status.HTTP_404_NOT_FOUND)
 
 
 class WebHook(APIView):
@@ -173,9 +171,11 @@ class WebHook(APIView):
         """ Webhook to pull the code from github to the backend server"""
         repo = git.Repo('./API')
         origin = repo.remotes.origin
-        repo.create_head('main', origin.refs.main).set_tracking_branch(origin.refs.main).checkout()
+        repo.create_head('main', origin.refs.main).set_tracking_branch(
+            origin.refs.main).checkout()
         origin.pull()
         return '', 200
+
 
 class GetUserData(APIView):
 
@@ -188,14 +188,13 @@ class GetUserData(APIView):
             places = []
             for i in user_places:
                 places.append(PlaceViewSerializer(i).data)
-            
-            return Response({'id':user_object.id,'username':user_object.username,
-                            'email':user_object.email,'places':places},status=status.HTTP_200_OK)
 
-            #return Response({'id':self.request.session['member_id'],
+            return Response({'id': user_object.id, 'username': user_object.username,
+                            'email': user_object.email, 'places': places}, status=status.HTTP_200_OK)
+
+            # return Response({'id':self.request.session['member_id'],
             # 'username':user_object.username,
             # 'email':user_object.email,},status=status.HTTP_200_OK)
         except:
             return Response({'Bad Request': 'No user with this username in Database'},
-            status = status.HTTP_404_NOT_FOUND)
-    
+                            status=status.HTTP_404_NOT_FOUND)
