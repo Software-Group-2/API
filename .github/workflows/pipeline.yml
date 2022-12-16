@@ -34,7 +34,7 @@ jobs:
       run: |
           coverage xml
     
-    - name: 💅🏽 Analysing code lynter
+    - name: 💅🏽 Analysing code linter
       run: |
         pylint api_app --rcfile=.pylintrc --recursive=y   
     
