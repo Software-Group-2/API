@@ -71,6 +71,7 @@ class LoginUser(APIView):
                             status=status.HTTP_403_FORBIDDEN)
 
         except Exception as e:
+            print(e)
             return Response({'Bad Request': 'Either user is not in Database or Invalid input'},
                             status=status.HTTP_400_BAD_REQUEST)
 
@@ -165,6 +166,7 @@ class GetCommentsData(APIView):
 
             return Response({'comments': comments}, status=status.HTTP_200_OK)
         except Exception as e:
+            print(e)
             return Response({'Bad Request': 'No post with this id in Database'},
                             status=status.HTTP_404_NOT_FOUND)
 
@@ -209,5 +211,6 @@ class GetUserData(APIView):
             # 'username':user_object.username,
             # 'email':user_object.email,},status=status.HTTP_200_OK)
         except Exception as e:
+            print(e)
             return Response({'Bad Request': 'No user with this username in Database'},
                             status=status.HTTP_404_NOT_FOUND)
