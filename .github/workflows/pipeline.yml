@@ -38,9 +38,9 @@ jobs:
       run: |
         pylint api_app --rcfile=.pylintrc --recursive=y
     
-    - name: 🎀 Check PEP8 rules api_app
+    - name: 🎀 Check PEP8 rules
       run: |
-         pep8 api_app API
+         pycodestyle api_app API 
     
     - name: 📠 SonarCloud Scan
       uses: SonarSource/sonarcloud-github-action@master
