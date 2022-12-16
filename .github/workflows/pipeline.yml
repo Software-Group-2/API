@@ -39,6 +39,7 @@ jobs:
         pylint api_app --rcfile=.pylintrc --recursive=y
     
     - name: 🎀 Check PEP8 rules
+      continue-on-error: true
       run: |
          pycodestyle api_app API 
     
