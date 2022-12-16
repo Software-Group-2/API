@@ -5,7 +5,9 @@ from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 import git
+from drf_yasg.utils import swagger_auto_schema
 
+from django.core import management
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import check_password, make_password
 from .serializers import CreateUserSerializer, LoginUserSerializer
@@ -17,12 +19,13 @@ from .models import Place, Comment
 
 class CreateUser(APIView):
     serializer_class = CreateUserSerializer
+    @swagger_auto_schema(responses={201: serializer_class(many=True)})
 
     def post(self, request, format=None):
         """ post request to register user"""
 
         serializer = self.serializer_class(data=request.data)
-
+    
         # only username is unique email is not checked for uniqueness
         # maybe change this later
         if serializer.is_valid():
@@ -46,6 +49,7 @@ class CreateUser(APIView):
 
 class LoginUser(APIView):
     serializer_class = LoginUserSerializer
+    @swagger_auto_schema(responses={200: serializer_class(many=True)})
 
     def post(self, request, format=None):
         """post request to login user"""
@@ -86,6 +90,7 @@ class LogoutUser(APIView):
 
 class CreatePlace(APIView):
     serializer_class = AddPlaceSerializer
+    @swagger_auto_schema(responses={201: serializer_class(many=True)})
 
     def post(self, request, format=None):
         """ post request to create a place"""
@@ -119,6 +124,7 @@ class CreatePlace(APIView):
 
 class CreateComment(APIView):
     serializer_class = AddCommentSerializer
+    @swagger_auto_schema(responses={201: serializer_class(many=True)})
 
     def post(self, request, format=None):
         """ post request to create a place"""
@@ -165,13 +171,15 @@ class GetCommentsData(APIView):
 
 
 class WebHook(APIView):
+    swagger_schema = None
     def post(self, request, format=None):
         """ Webhook to pull the code from github to the backend server"""
         repo = git.Repo('./API')
         origin = repo.remotes.origin
-        repo.create_head('main', origin.refs.main).set_tracking_branch(
-            origin.refs.main).checkout()
+        repo.create_head('main', origin.refs.main).set_tracking_branch(origin.refs.main).checkout()
         origin.pull()
+        management.call_command('collectstatic', interactive=False)
+
         return '', 200
 
 
