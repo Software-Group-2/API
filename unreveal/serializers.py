@@ -12,7 +12,13 @@ class UserSerializer(serializers.ModelSerializer):
 class LoginSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'password']
+        fields = ['email', 'password']
+
+
+class LogoutSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['email']
 
 
 class PlaceSerializer(serializers.ModelSerializer):
@@ -20,7 +26,7 @@ class PlaceSerializer(serializers.ModelSerializer):
         model = Place
         fields = [
             'id',
-            'username',
+            'email',
             'latitude',
             'longitude',
             'name',
@@ -32,7 +38,7 @@ class PlaceSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = ['id', 'place_id', 'username', 'comment']
+        fields = ['id', 'place_id', 'email', 'comment']
 
 
 class ErrorResponseSerializer(serializers.ModelSerializer):

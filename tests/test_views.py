@@ -16,7 +16,38 @@ class Login(APITestCase):
         self.client.post(f'{base_url}/user', register_data, format="json")
 
         data = {
+            "email": "benny@gmail.com",
+            "password": "unreveal"
+        }
+        response = self.client.post(f'{base_url}/login', data, format="json")
+
+        self.assertEqual(
+            response.content, b'{"message":"OK","description":"You are logged in"}')
+
+    def test_login_multiple_users(self):
+        base_url = "http://127.0.0.1:8000/api"
+        register_data = {
             "username": "benny22",
+            "email": "benny@gmail.com",
+            "password": "unreveal"
+        }
+        self.client.post(f'{base_url}/user', register_data, format="json")
+
+        register_data = {
+            "username": "tom",
+            "email": "tom@gmail.com",
+            "password": "unreveal"
+        }
+        self.client.post(f'{base_url}/user', register_data, format="json")
+
+        data = {
+            "email": "benny@gmail.com",
+            "password": "unreveal"
+        }
+        response = self.client.post(f'{base_url}/login', data, format="json")
+
+        data = {
+            "email": "tom@gmail.com",
             "password": "unreveal"
         }
         response = self.client.post(f'{base_url}/login', data, format="json")
@@ -28,7 +59,7 @@ class Login(APITestCase):
         url = "http://127.0.0.1:8000/api/login"
 
         data = {
-            "username": "benny22",
+            "email": "benny@gmail.com",
             "password": "unreveal"
         }
         response = self.client.post(url, data, format="json")
@@ -45,13 +76,13 @@ class Login(APITestCase):
         self.client.post(f'{base_url}/user', register_data, format="json")
 
         data = {
-            "username": "benny22",
-            "password": "anotherpassword"
+            "email": "benny@gmail.com",
+            "password": "unreveal"
         }
         response = self.client.post(f'{base_url}/login', data, format="json")
 
         self.assertEqual(
-            response.content, b'{"error":"Bad Request","description":"username and password did not match"}')
+            response.content, b'{"error":"Bad Request","description":"email and password did not match"}')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
@@ -66,21 +97,66 @@ class Logout(APITestCase):
         self.client.post(f'{base_url}/user', register_data, format="json")
 
         data = {
-            "username": "benny22",
+            "email": "benny@gmail.com",
             "password": "unreveal"
         }
         self.client.post(f'{base_url}/login', data, format="json")
 
-        response = self.client.post(f'{base_url}/logout', {}, format='json')
+        data = {
+            "email": "benny@gmail.com",
+        }
+
+        response = self.client.post(f'{base_url}/logout', data, format='json')
         self.assertEqual(response.content, b'{"message":"OK","description":"You are logged out"}')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_logout_multiple_users(self):
+        base_url = "http://127.0.0.1:8000/api"
+        register_data = {
+            "username": "benny22",
+            "email": "benny@gmail.com",
+            "password": "unreveal"
+        }
+        self.client.post(f'{base_url}/user', register_data, format="json")
+
+        register_data = {
+            "username": "tom",
+            "email": "tom@gmail.com",
+            "password": "unreveal"
+        }
+        self.client.post(f'{base_url}/user', register_data, format="json")
+
+        data = {
+            "email": "benny@gmail.com",
+            "password": "unreveal"
+        }
+        response = self.client.post(f'{base_url}/login', data, format="json")
+
+        data = {
+            "email": "tom@gmail.com",
+            "password": "unreveal"
+        }
+        response = self.client.post(f'{base_url}/login', data, format="json")
+
+        data = {
+            "email": "benny@gmail.com",
+        }
+
+        response = self.client.post(f'{base_url}/logout', data, format='json')
+        self.assertEqual(response.content, b'{"message":"OK","description":"You are logged out"}')
+
+        data = {
+            "email": "tom@gmail.com",
+        }
+        response = self.client.post(f'{base_url}/logout', data, format='json')
+        self.assertEqual(response.content, b'{"message":"OK","description":"You are logged out"}')
 
     def test_fail_logout(self):
         url = "http://127.0.0.1:8000/api/logout"
 
         response = self.client.post(url, {}, format='json')
         self.assertEqual(response.content,
-                         b'{"error":"Bad Request","description":"invalid username"}')
+                         b'{"error":"Bad Request","description":"invalid email"}')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
@@ -96,7 +172,7 @@ class Place(APITestCase):
         self.client.post(f'{base_url}/user', data, format='json')
 
         data = {
-            "username": "tom",
+            "email": "benny@gmail.com",
             "latitude": "1234657865",
             "longitude": "456786754",
             "name": "caffee",
@@ -134,7 +210,7 @@ class CommentTest(APITestCase):
         self.client.post(f'{base_url}/user', data, format='json')
 
         data = {
-            "username": "tom",
+            "email": "benny@gmail.com",
             "latitude": "1234657865",
             "longitude": "456786754",
             "name": "caffee",
@@ -146,7 +222,7 @@ class CommentTest(APITestCase):
 
         data = {
             "place_id": response.data['id'],
-            "username": "tom",
+            "email": "benny@gmail.com",
             "comment": "Hi im here for testing",
         }
 
@@ -165,7 +241,7 @@ class CommentTest(APITestCase):
         self.client.post(f'{base_url}/user', data, format='json')
 
         data = {
-            "username": "tom",
+            "email": "benny@gmail.com",
             "latitude": "1234657865",
             "longitude": "456786754",
             "name": "caffee",
@@ -177,7 +253,7 @@ class CommentTest(APITestCase):
 
         data = {
             "place_id": response.data['id'],
-            "username": "marcus",
+            "email": "marcus@gmail.com",
             "comment": "Hi im here for testing",
         }
 
@@ -199,7 +275,7 @@ class CommentTest(APITestCase):
 
         data = {
             "place_id": uuid.uuid1(),
-            "username": "tom",
+            "email": "benny@gmail.com",
             "comment": "Hi im here for testing",
         }
 
@@ -219,7 +295,7 @@ class CommentTest(APITestCase):
         self.client.post(f'{base_url}/user', data, format='json')
 
         data = {
-            "username": "tom",
+            "email": "benny@gmail.com",
             "latitude": "1234657865",
             "longitude": "456786754",
             "name": "caffee",
@@ -231,7 +307,7 @@ class CommentTest(APITestCase):
 
         data = {
             "place_id": response.data['id'],
-            "username": "tom",
+            "email": "benny@gmail.com",
             "comment": "Hi im here for testing",
         }
 
@@ -252,7 +328,7 @@ class CommentTest(APITestCase):
         self.client.post(f'{base_url}/user', data, format='json')
 
         data = {
-            "username": "tom",
+            "email": "benny@gmail.com",
             "latitude": "1234657865",
             "longitude": "456786754",
             "name": "caffee",
@@ -305,7 +381,7 @@ class TestUser(APITestCase):
             "password": "unreveal"
         }
         self.client.post(url, data, format='json')
-        response = self.client.get(f'{url}?username=tom', format='json')
+        response = self.client.get(f'{url}?email=benny@gmail.com', format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_conflict_with_duplicated_user(self):

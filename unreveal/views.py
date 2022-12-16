@@ -11,7 +11,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.hashers import check_password, make_password
 from rest_framework.exceptions import ValidationError
 from .serializers import UserSerializer, LoginSerializer, ErrorResponseSerializer, \
-    SuccessResponseSerializer, PlaceSerializer, CommentSerializer
+    SuccessResponseSerializer, PlaceSerializer, CommentSerializer, LogoutSerializer
 from .models import Place, Comment
 
 
@@ -23,14 +23,14 @@ class UserView(APIView):
 
     @swagger_auto_schema(
         manual_parameters=[
-            openapi.Parameter('username', openapi.IN_PATH, type=openapi.TYPE_STRING)],
+            openapi.Parameter('email', openapi.IN_PATH, type=openapi.TYPE_STRING)],
         responses={201: serializer_class(many=True), 404: ErrorResponseSerializer}
     )
     def get(self, request, format=None):
         """get request to get the data of the user given his username"""
         try:
-            username = self.request.query_params.get('username')
-            user_object = User.objects.get(username=username)
+            email = self.request.query_params.get('email')
+            user_object = User.objects.get(email=email)
 
             return Response(
                 model_to_dict(user_object),
@@ -85,13 +85,16 @@ class Login(APIView):
     def post(self, request, format=None):
         """post request to login user"""
         try:
-            user = request.data['username']
+            email = request.data['email']
             password = request.data['password']
 
-            user_object = User.objects.get(username=user)
+            user_object = User.objects.get(email=email)
             match_check = check_password(password, user_object.password)
             if match_check:
-                self.request.session['member_id'] = user_object.id
+                session = self.request.session['member_id']
+                if isinstance(session, int):
+                    session = [session]
+                self.request.session['member_id'] = list(dict.fromkeys(session + [user_object.id]))
                 return Response(
                     {
                         'message': 'OK',
@@ -101,11 +104,12 @@ class Login(APIView):
                 )
             raise AttributeError
 
-        except AttributeError:
+        except AttributeError as e:
+            print(e)
             return Response(
                 {
                     'error': 'Bad Request',
-                    'description': 'username and password did not match'
+                    'description': 'email and password did not match'
                 },
                 status=status.HTTP_401_UNAUTHORIZED)
         except ObjectDoesNotExist as e:
@@ -121,14 +125,16 @@ class Login(APIView):
 class Logout(APIView):
 
     @swagger_auto_schema(
-        manual_parameters=[
-            openapi.Parameter('username', openapi.IN_PATH, type=openapi.TYPE_STRING)],
+        request_body=LogoutSerializer,
         responses={200: SuccessResponseSerializer,
-                   400: ErrorResponseSerializer})
+                   400: ErrorResponseSerializer,
+                   404: ErrorResponseSerializer})
     def post(self, request, format=None):
         """post request to logout"""
         try:
-            del self.request.session['member_id']
+            email = request.data['email']
+            user_id = User.objects.get(email=email).id
+            self.request.session['member_id'].remove(user_id)
             return Response(
                 {
                     'message': 'OK',
@@ -136,11 +142,21 @@ class Logout(APIView):
                 },
                 status=status.HTTP_200_OK
             )
-        except KeyError:
+
+        except IndexError as e:
+            print(e)
             return Response(
                 {
                     'error': 'Bad Request',
-                    'description': 'invalid username'
+                    'description': 'user is not logged in'
+                },
+                status=status.HTTP_404_NOT_FOUND)
+
+        except KeyError as e:
+            return Response(
+                {
+                    'error': 'Bad Request',
+                    'description': 'invalid email'
                 },
                 status=status.HTTP_400_BAD_REQUEST)
 
@@ -158,8 +174,8 @@ class PlaceView(APIView):
         serializer = self.serializer_class(data=request.data)
         try:
             serializer.is_valid(raise_exception=True)
-            User.objects.get(username=serializer.data.get('username'))
-            username = serializer.data.get('username')
+            User.objects.get(email=serializer.data.get('email'))
+            email = serializer.data.get('email')
             latitude = serializer.data.get('latitude')
             longitude = serializer.data.get('longitude')
             name = serializer.data.get('name')
@@ -167,7 +183,7 @@ class PlaceView(APIView):
             label = serializer.data.get('label')
 
             place_table = Place(
-                username=username,
+                email=email,
                 latitude=latitude,
                 longitude=longitude,
                 name=name,
@@ -245,14 +261,14 @@ class CommentView(APIView):
         try:
             serializer.is_valid()
             place_id = serializer.data.get('place_id')
-            username = serializer.data.get('username')
+            email = serializer.data.get('email')
             comment = serializer.data.get('comment')
 
-            User.objects.get(username=username)
+            User.objects.get(email=email)
             Place.objects.get(id=place_id)
 
             comment_table = Comment(
-                place_id=place_id, username=username, comment=comment)
+                place_id=place_id, email=email, comment=comment)
             comment_table.save()
 
             return Response(CommentSerializer(comment_table).data,
