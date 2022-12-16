@@ -4,7 +4,7 @@ from .views import UserView, Login, Logout
 from .views import PlaceView, WebHook, CommentView
 
 urlpatterns = [
-    path("register", UserView.as_view()),
+    path("user", UserView.as_view()),
     path("login", Login.as_view()),
     path("logout", Logout.as_view()),
     path("place", PlaceView.as_view()),

@@ -13,7 +13,7 @@ class Login(APITestCase):
             "email": "benny@gmail.com",
             "password": "unreveal"
         }
-        self.client.post(f'{base_url}/register', register_data, format="json")
+        self.client.post(f'{base_url}/user', register_data, format="json")
 
         data = {
             "username": "benny22",
@@ -42,7 +42,7 @@ class Login(APITestCase):
             "email": "benny@gmail.com",
             "password": "password"
         }
-        self.client.post(f'{base_url}/register', register_data, format="json")
+        self.client.post(f'{base_url}/user', register_data, format="json")
 
         data = {
             "username": "benny22",
@@ -63,7 +63,7 @@ class Logout(APITestCase):
             "email": "benny@gmail.com",
             "password": "unreveal"
         }
-        self.client.post(f'{base_url}/register', register_data, format="json")
+        self.client.post(f'{base_url}/user', register_data, format="json")
 
         data = {
             "username": "benny22",
@@ -93,7 +93,7 @@ class Place(APITestCase):
             "password": "unreveal"
         }
 
-        self.client.post(f'{base_url}/register', data, format='json')
+        self.client.post(f'{base_url}/user', data, format='json')
 
         data = {
             "username": "tom",
@@ -131,7 +131,7 @@ class CommentTest(APITestCase):
             "password": "unreveal"
         }
 
-        self.client.post(f'{base_url}/register', data, format='json')
+        self.client.post(f'{base_url}/user', data, format='json')
 
         data = {
             "username": "tom",
@@ -162,7 +162,7 @@ class CommentTest(APITestCase):
             "password": "unreveal"
         }
 
-        self.client.post(f'{base_url}/register', data, format='json')
+        self.client.post(f'{base_url}/user', data, format='json')
 
         data = {
             "username": "tom",
@@ -195,7 +195,7 @@ class CommentTest(APITestCase):
             "password": "unreveal"
         }
 
-        self.client.post(f'{base_url}/register', data, format='json')
+        self.client.post(f'{base_url}/user', data, format='json')
 
         data = {
             "place_id": uuid.uuid1(),
@@ -216,7 +216,7 @@ class CommentTest(APITestCase):
             "password": "unreveal"
         }
 
-        self.client.post(f'{base_url}/register', data, format='json')
+        self.client.post(f'{base_url}/user', data, format='json')
 
         data = {
             "username": "tom",
@@ -249,7 +249,7 @@ class CommentTest(APITestCase):
             "password": "unreveal"
         }
 
-        self.client.post(f'{base_url}/register', data, format='json')
+        self.client.post(f'{base_url}/user', data, format='json')
 
         data = {
             "username": "tom",
@@ -270,12 +270,12 @@ class CommentTest(APITestCase):
 class TestUser(APITestCase):
 
     def test_user_not_found(self):
-        url = "http://127.0.0.1:8000/api/register?username=tom"
+        url = "http://127.0.0.1:8000/api/user?username=tom"
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_create_user(self):
-        url = "http://127.0.0.1:8000/api/register"
+        url = "http://127.0.0.1:8000/api/user"
         data = {
             "username": "tom",
             "email": "benny@gmail.com",
@@ -287,7 +287,7 @@ class TestUser(APITestCase):
         self.assertEqual(len(User.objects.filter(username='tom')), 1)
 
     def test_bad_request_create_user_wrong_email(self):
-        url = "http://127.0.0.1:8000/api/register"
+        url = "http://127.0.0.1:8000/api/user"
         data = {
             "username": "tom",
             "email": "bennygmail.com",
@@ -298,7 +298,7 @@ class TestUser(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_get_user(self):
-        url = "http://127.0.0.1:8000/api/register"
+        url = "http://127.0.0.1:8000/api/user"
         data = {
             "username": "tom",
             "email": "benny@gmail.com",
@@ -309,7 +309,7 @@ class TestUser(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_conflict_with_duplicated_user(self):
-        url = "http://127.0.0.1:8000/api/register"
+        url = "http://127.0.0.1:8000/api/user"
         data = {
             "username": "benny22",
             "email": "benny@gmail.com",
