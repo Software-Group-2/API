@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api_app', '0003_errorresponse_successresponse_and_more'),
+        ('unreveal', '0003_errorresponse_successresponse_and_more'),
     ]
 
     operations = [

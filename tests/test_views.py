@@ -2,7 +2,7 @@ import uuid
 
 from rest_framework import status
 from rest_framework.test import APITestCase
-from api_app.models import User
+from unreveal.models import User
 
 
 class Login(APITestCase):
