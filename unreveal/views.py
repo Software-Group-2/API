@@ -3,6 +3,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 import git
+from subprocess import call
 from django.forms.models import model_to_dict
 from django.core.exceptions import ObjectDoesNotExist
 from drf_yasg.utils import swagger_auto_schema
@@ -305,6 +306,9 @@ class WebHook(APIView):
         repo.create_head('main', origin.refs.main).set_tracking_branch(
             origin.refs.main).checkout()
         origin.pull()
-        management.call_command('collectstatic', interactive=False)
+        call(['pip', 'install', '-r', 'requirements.txt'])
+        call(['python', 'manage.py', 'collectstatic', '--noinput'])
+        call(['python', 'manage.py', 'makemigrations'])
+        call(['python', 'manage.py', 'migrate'])
 
         return '', 200
