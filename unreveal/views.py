@@ -134,6 +134,8 @@ class Logout(APIView):
         try:
             email = request.data['email']
             user_id = User.objects.get(email=email).id
+            if isinstance(self.request.session['member_id'], int):
+                raise IndexError("There is no one logged in")
             self.request.session['member_id'].remove(user_id)
             return Response(
                 {
@@ -153,6 +155,7 @@ class Logout(APIView):
                 status=status.HTTP_404_NOT_FOUND)
 
         except KeyError as e:
+            print(e)
             return Response(
                 {
                     'error': 'Bad Request',

@@ -159,6 +159,14 @@ class Logout(APITestCase):
                          b'{"error":"Bad Request","description":"invalid email"}')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    def test_logout_without_login(self):
+        url = "http://127.0.0.1:8000/api/logout"
+
+        response = self.client.post(url, {}, format='json')
+        self.assertEqual(response.content,
+                         b'{"error":"Bad Request","description":"invalid email"}')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
 
 class Place(APITestCase):
     def test_create_place(self):
@@ -185,17 +193,21 @@ class Place(APITestCase):
 
     def test_bad_request_create_place_user_do_not_exists(self):
         base_url = "http://127.0.0.1:8000/api"
+        register_data = {
+            "username": "benny22",
+            "email": "benny@gmail.com",
+            "password": "unreveal"
+        }
+        self.client.post(f'{base_url}/user', register_data, format="json")
+
         data = {
-            "username": "tom",
-            "latitude": "1234657865",
-            "longitude": "456786754",
-            "name": "caffee",
-            "description": "best caffee in berlin",
-            "label": "caffe;relax;fun",
+            "email": "benny@gmail.com",
         }
 
-        response = self.client.post(f'{base_url}/place', data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response = self.client.post(f'{base_url}/logout', data, format='json')
+        self.assertEqual(response.content,
+                         b'{"error":"Bad Request","description":"user is not logged in"}')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
 class CommentTest(APITestCase):
