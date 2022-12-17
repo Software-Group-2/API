@@ -1,3 +1,4 @@
+import os
 from drf_yasg import openapi
 from rest_framework import status
 from rest_framework.views import APIView
@@ -6,7 +7,6 @@ import git
 from django.forms.models import model_to_dict
 from django.core.exceptions import ObjectDoesNotExist
 from drf_yasg.utils import swagger_auto_schema
-from django.core import management
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import check_password, make_password
 from rest_framework.exceptions import ValidationError
@@ -305,6 +305,11 @@ class WebHook(APIView):
         repo.create_head('main', origin.refs.main).set_tracking_branch(
             origin.refs.main).checkout()
         origin.pull()
-        management.call_command('collectstatic', interactive=False)
+        os.system("pip install -r requirements.txt")
+        os.system("python manage.py makemigrations")
+        os.system("python manage.py migrate")
+        os.system("python manage.py collectstatic --noinput")
+        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'API.production_settings')
+        origin.pull()
 
         return '', 200
