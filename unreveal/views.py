@@ -305,11 +305,11 @@ class WebHook(APIView):
         repo.create_head('main', origin.refs.main).set_tracking_branch(
             origin.refs.main).checkout()
         origin.pull()
+        os.system("workon myenv")
         os.system("pip install -r requirements.txt")
         os.system("python manage.py makemigrations")
         os.system("python manage.py migrate")
         os.system("python manage.py collectstatic --noinput")
-        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'API.production_settings')
         origin.pull()
 
         return '', 200
