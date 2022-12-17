@@ -1,4 +1,4 @@
-from subprocess import call
+import os
 from drf_yasg import openapi
 from rest_framework import status
 from rest_framework.views import APIView
@@ -305,9 +305,9 @@ class WebHook(APIView):
         repo.create_head('main', origin.refs.main).set_tracking_branch(
             origin.refs.main).checkout()
         origin.pull()
-        call(['pip', 'install', '-r', 'requirements.txt'])
-        call(['python', 'manage.py', 'collectstatic', '--noinput'])
-        call(['python', 'manage.py', 'makemigrations'])
-        call(['python', 'manage.py', 'migrate'])
+        os.system("python manage.py collectstatic --noinput")
+        os.system("python manage.py makemigrations")
+        os.system("python manage.py migrate")
+        
 
         return '', 200
