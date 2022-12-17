@@ -1,13 +1,12 @@
+from subprocess import call
 from drf_yasg import openapi
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 import git
-from subprocess import call
 from django.forms.models import model_to_dict
 from django.core.exceptions import ObjectDoesNotExist
 from drf_yasg.utils import swagger_auto_schema
-from django.core import management
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import check_password, make_password
 from rest_framework.exceptions import ValidationError
