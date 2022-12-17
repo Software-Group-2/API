@@ -36,12 +36,12 @@ jobs:
     
     - name: 💅🏽 Analysing code linter
       run: |
-        pylint api_app --rcfile=.pylintrc --recursive=y
+        pylint unreveal --rcfile=.pylintrc --recursive=y
     
     - name: 🎀 Check PEP8 rules
       continue-on-error: true
       run: |
-         pycodestyle api_app API 
+         pycodestyle unreveal API 
     
     - name: 📠 SonarCloud Scan
       uses: SonarSource/sonarcloud-github-action@master

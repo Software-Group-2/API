@@ -21,9 +21,9 @@ from drf_yasg import openapi
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="Unreveal API",
+        title="UnReveal API",
         default_version='v1',
-        description="API Documentation of Unreveal App",
+        description="API Documentation of UnReveal App",
     ),
     public=True,
     permission_classes=[permissions.AllowAny],
@@ -32,6 +32,6 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('api_app.urls')),
+    path('api/', include('unreveal.urls')),
     path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 ]

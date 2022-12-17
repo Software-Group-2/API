@@ -307,3 +307,4 @@ fabric.properties
 
 .coverage
 .idea
+static/

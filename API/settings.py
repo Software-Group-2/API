@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'api_app.apps.ApiAppConfig',
+    'unreveal.apps.ApiAppConfig',
     'rest_framework',
     'corsheaders',
     'drf_yasg',
@@ -149,4 +149,8 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
+}
+
+SWAGGER_SETTINGS = {
+    'DEFAULT_MODEL_RENDERING': 'example'
 }
