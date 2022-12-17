@@ -5,24 +5,26 @@ from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 import git
+from drf_yasg.utils import swagger_auto_schema
 
+from django.core import management
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import check_password, make_password
 from .serializers import CreateUserSerializer, LoginUserSerializer
 from .serializers import AddPlaceSerializer, AddCommentSerializer, PlaceViewSerializer
 from .models import Place, Comment
 
-
 # POST Requests
+
 
 class CreateUser(APIView):
     serializer_class = CreateUserSerializer
 
+    @swagger_auto_schema(responses={201: serializer_class(many=True)})
     def post(self, request, format=None):
         """ post request to register user"""
 
         serializer = self.serializer_class(data=request.data)
-
         # only username is unique email is not checked for uniqueness
         # maybe change this later
         if serializer.is_valid():
@@ -47,6 +49,7 @@ class CreateUser(APIView):
 class LoginUser(APIView):
     serializer_class = LoginUserSerializer
 
+    @swagger_auto_schema(responses={200: serializer_class(many=True)})
     def post(self, request, format=None):
         """post request to login user"""
         # serializer = self.serializer_class(data=request.data)
@@ -67,7 +70,8 @@ class LoginUser(APIView):
             return Response({'Bad Request': 'username and password did not match'},
                             status=status.HTTP_403_FORBIDDEN)
 
-        except:
+        except Exception as e:
+            print(e)
             return Response({'Bad Request': 'Either user is not in Database or Invalid input'},
                             status=status.HTTP_400_BAD_REQUEST)
 
@@ -87,6 +91,7 @@ class LogoutUser(APIView):
 class CreatePlace(APIView):
     serializer_class = AddPlaceSerializer
 
+    @swagger_auto_schema(responses={201: serializer_class(many=True)})
     def post(self, request, format=None):
         """ post request to create a place"""
 
@@ -120,6 +125,7 @@ class CreatePlace(APIView):
 class CreateComment(APIView):
     serializer_class = AddCommentSerializer
 
+    @swagger_auto_schema(responses={201: serializer_class(many=True)})
     def post(self, request, format=None):
         """ post request to create a place"""
 
@@ -159,12 +165,15 @@ class GetCommentsData(APIView):
                 comments.append(AddCommentSerializer(i).data)
 
             return Response({'comments': comments}, status=status.HTTP_200_OK)
-        except:
+        except Exception as e:
+            print(e)
             return Response({'Bad Request': 'No post with this id in Database'},
                             status=status.HTTP_404_NOT_FOUND)
 
 
 class WebHook(APIView):
+    swagger_schema = None
+
     def post(self, request, format=None):
         """ Webhook to pull the code from github to the backend server"""
         repo = git.Repo('./API')
@@ -172,6 +181,8 @@ class WebHook(APIView):
         repo.create_head('main', origin.refs.main).set_tracking_branch(
             origin.refs.main).checkout()
         origin.pull()
+        management.call_command('collectstatic', interactive=False)
+
         return '', 200
 
 
@@ -199,6 +210,7 @@ class GetUserData(APIView):
             # return Response({'id':self.request.session['member_id'],
             # 'username':user_object.username,
             # 'email':user_object.email,},status=status.HTTP_200_OK)
-        except:
+        except Exception as e:
+            print(e)
             return Response({'Bad Request': 'No user with this username in Database'},
                             status=status.HTTP_404_NOT_FOUND)
