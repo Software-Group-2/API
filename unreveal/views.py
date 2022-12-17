@@ -183,9 +183,11 @@ class PlaceView(APIView):
             range_meters = float(range) * 0.00001
             places_table = []
             for row in Place.objects.all():
-                    if float(row.latitude)-float(range_meters) <= float(latitude) and float(row.latitude)+float(range_meters) >= float(latitude):
-                        if float(row.longitude)-float(range_meters) <= float(longitude) and float(row.longitude)+float(range_meters) >= float(longitude):
-                                places_table.append(row)
+                if (float(row.latitude)-float(range_meters) <= float(latitude) 
+                and float(row.latitude)+float(range_meters) >= float(latitude)):
+                    if (float(row.longitude)-float(range_meters) <= float(longitude) 
+                    and float(row.longitude)+float(range_meters) >= float(longitude)):
+                        places_table.append(row)
             places = []
             for i in places_table:
                 places.append(PlaceSerializer(i).data)
