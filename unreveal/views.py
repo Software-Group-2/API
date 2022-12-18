@@ -11,8 +11,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth.hashers import check_password, make_password
 from rest_framework.exceptions import ValidationError
 from .serializers import UserSerializer, LoginSerializer, ErrorResponseSerializer, \
-    SuccessResponseSerializer, PlaceSerializer, CommentSerializer, LogoutSerializer
-from .models import Place, Comment
+    SuccessResponseSerializer, PlaceSerializer, CommentSerializer, LogoutSerializer, \
+    RatingSerializer
+from .models import Place, Comment, Rating
 
 
 # POST Requests
@@ -308,3 +309,82 @@ class WebHook(APIView):
         management.call_command('collectstatic', interactive=False)
 
         return '', 200
+
+
+class RatingView(APIView):
+    serializer_class = RatingSerializer
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter('place_id', openapi.IN_PATH, type=openapi.TYPE_STRING)],
+        responses={201: serializer_class(many=True), 404: ErrorResponseSerializer}
+    )
+    def get(self, request, format=None):
+        """get request to get the comments of a post given the post id"""
+        try:
+            place_id = self.request.query_params.get('place_id')
+            rating_places = Rating.objects.filter(place_id=place_id)
+            Place.objects.get(id__exact=place_id)
+            if not rating_places:
+                raise ObjectDoesNotExist
+            ratings = []
+            for i in rating_places:
+                ratings.append(RatingSerializer(i).data)
+
+            return Response(
+                ratings,
+                status=status.HTTP_200_OK
+            )
+        except ObjectDoesNotExist as e:
+            print(e)
+            return Response(
+                {
+                    'error': 'Not Found',
+                    'description': 'There is no rating found for this place'
+                },
+                status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            print(e)
+            return Response({
+                'error': 'Bad Request',
+                'description': 'No register with this id in Database'
+            }, status=status.HTTP_404_NOT_FOUND)
+
+    @swagger_auto_schema(request_body=RatingSerializer,
+                         responses={201: serializer_class(many=True), 403: ErrorResponseSerializer})
+    def post(self, request, format=None):
+        """ post request to create a rating"""
+
+        serializer = self.serializer_class(data=request.data)
+
+        try:
+            serializer.is_valid()
+            place_id = serializer.data.get('place_id')
+            email = serializer.data.get('email')
+            rating = serializer.data.get('rating')
+
+            User.objects.get(email=email)
+            Place.objects.get(id=place_id)
+
+            rating_table = Rating(
+                place_id=place_id, email=email, rating=rating)
+            rating_table.save()
+
+            return Response(RatingSerializer(rating_table).data,
+                            status=status.HTTP_201_CREATED)
+
+        except ObjectDoesNotExist as e:
+            print(e)
+            return Response(
+                {
+                    'error': 'Not Found',
+                    'description': e.args[0]
+                },
+                status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            print(e)
+            return Response(
+                {
+                    'error': 'Bad Request',
+                    'description': 'Invalid inputs'
+                }, status=status.HTTP_400_BAD_REQUEST)

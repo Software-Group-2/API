@@ -1,7 +1,7 @@
 from django.urls import path
 
 from .views import UserView, Login, Logout
-from .views import PlaceView, WebHook, CommentView
+from .views import PlaceView, WebHook, CommentView, RatingView
 
 urlpatterns = [
     path("user", UserView.as_view()),
@@ -10,4 +10,5 @@ urlpatterns = [
     path("place", PlaceView.as_view()),
     path("comment", CommentView.as_view()),
     path("git_update", WebHook.as_view()),
+    path("rating", RatingView.as_view()),
 ]

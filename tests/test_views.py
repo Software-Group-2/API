@@ -407,3 +407,148 @@ class TestUser(APITestCase):
         self.client.post(url, data, format='json')
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
+
+
+class RatingTest(APITestCase):
+    def test_create_rating(self):
+        base_url = "http://127.0.0.1:8000/api"
+        data = {
+            "username": "tom",
+            "email": "benny@gmail.com",
+            "password": "unreveal"
+        }
+
+        self.client.post(f'{base_url}/user', data, format='json')
+
+        data = {
+            "email": "benny@gmail.com",
+            "latitude": "1234657865",
+            "longitude": "456786754",
+            "name": "caffee",
+            "description": "best caffee in berlin",
+            "label": "caffe;relax;fun",
+        }
+
+        response = self.client.post(f'{base_url}/place', data, format='json')
+
+        data = {
+            "place_id": response.data['id'],
+            "email": "benny@gmail.com",
+            "rating":  4.5,
+        }
+
+        response = self.client.post(f'{base_url}/rating', data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_bad_request_create_comment_user_do_not_exists(self):
+        base_url = "http://127.0.0.1:8000/api"
+
+        data = {
+            "username": "tom",
+            "email": "benny@gmail.com",
+            "password": "unreveal"
+        }
+
+        self.client.post(f'{base_url}/user', data, format='json')
+
+        data = {
+            "email": "benny@gmail.com",
+            "latitude": "1234657865",
+            "longitude": "456786754",
+            "name": "caffee",
+            "description": "best caffee in berlin",
+            "label": "caffe;relax;fun",
+        }
+
+        response = self.client.post(f'{base_url}/place', data, format='json')
+
+        data = {
+            "place_id": response.data['id'],
+            "email": "marcus@gmail.com",
+            "rating": 2.5,
+        }
+
+        response = self.client.post(f'{base_url}/rating', data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.content,
+                         b'{"error":"Not Found","description":"User matching query does not exist."}')
+
+    def test_bad_request_create_comment_place_do_not_exists(self):
+        base_url = "http://127.0.0.1:8000/api"
+
+        data = {
+            "username": "tom",
+            "email": "benny@gmail.com",
+            "password": "unreveal"
+        }
+
+        self.client.post(f'{base_url}/user', data, format='json')
+
+        data = {
+            "place_id": uuid.uuid1(),
+            "email": "benny@gmail.com",
+            "rating": 2.8,
+        }
+
+        response = self.client.post(f'{base_url}/rating', data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.content,
+                         b'{"error":"Not Found","description":"Place matching query does not exist."}')
+
+    def test_get_comment(self):
+        base_url = "http://127.0.0.1:8000/api"
+        data = {
+            "username": "tom",
+            "email": "benny@gmail.com",
+            "password": "unreveal"
+        }
+
+        self.client.post(f'{base_url}/user', data, format='json')
+
+        data = {
+            "email": "benny@gmail.com",
+            "latitude": "1234657865",
+            "longitude": "456786754",
+            "name": "caffee",
+            "description": "best caffee in berlin",
+            "label": "caffe;relax;fun",
+        }
+
+        response = self.client.post(f'{base_url}/place', data, format='json')
+
+        data = {
+            "place_id": response.data['id'],
+            "email": "benny@gmail.com",
+            "rating": 5,
+        }
+
+        self.client.post(f'{base_url}/rating', data, format='json')
+
+        response = self.client.get(
+            f'{base_url}/rating?place_id={response.data["id"]}', format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_not_found_get_non_existent_comment(self):
+        base_url = "http://127.0.0.1:8000/api"
+        data = {
+            "username": "tom",
+            "email": "benny@gmail.com",
+            "password": "unreveal"
+        }
+
+        self.client.post(f'{base_url}/user', data, format='json')
+
+        data = {
+            "email": "benny@gmail.com",
+            "latitude": "1234657865",
+            "longitude": "456786754",
+            "name": "caffee",
+            "description": "best caffee in berlin",
+            "label": "caffe;relax;fun",
+        }
+
+        response = self.client.post(f'{base_url}/place', data, format='json')
+
+        response = self.client.get(
+            f'{base_url}/rating?place_id={response.data["id"]}', format='json')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
