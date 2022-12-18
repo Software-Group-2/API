@@ -1,4 +1,5 @@
 import os
+import numpy as np
 from PIL import Image
 from drf_yasg import openapi
 from rest_framework import status
@@ -15,6 +16,7 @@ from .serializers import UserSerializer, LoginSerializer, ErrorResponseSerialize
     SuccessResponseSerializer, PlaceSerializer, CommentSerializer, LogoutSerializer
 from .models import Place, Comment
 img = Image.new('RGB', (100, 100))
+rng = np.random.default_rng()
 
 # POST Requests
 
@@ -305,12 +307,6 @@ class WebHook(APIView):
         origin = repo.remotes.origin
         repo.create_head('main', origin.refs.main).set_tracking_branch(
             origin.refs.main).checkout()
-        origin.pull()
-        os.system("workon myenv")
-        os.system("pip install -r requirements.txt")
-        os.system("python manage.py makemigrations")
-        os.system("python manage.py migrate")
-        os.system("python manage.py collectstatic --noinput")
         origin.pull()
 
         return '', 200
