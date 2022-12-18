@@ -1,5 +1,4 @@
 import os
-import numpy as np
 from PIL import Image
 from drf_yasg import openapi
 from rest_framework import status
@@ -15,8 +14,7 @@ from rest_framework.exceptions import ValidationError
 from .serializers import UserSerializer, LoginSerializer, ErrorResponseSerializer, \
     SuccessResponseSerializer, PlaceSerializer, CommentSerializer, LogoutSerializer
 from .models import Place, Comment
-img = Image.new('RGB', (100, 100))
-rng = np.random.default_rng()
+
 
 # POST Requests
 
