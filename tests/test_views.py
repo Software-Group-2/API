@@ -440,7 +440,7 @@ class RatingTest(APITestCase):
         response = self.client.post(f'{base_url}/rating', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    def test_bad_request_create_comment_user_do_not_exists(self):
+    def test_bad_request_create_rating_user_do_not_exists(self):
         base_url = "http://127.0.0.1:8000/api"
 
         data = {
@@ -473,7 +473,7 @@ class RatingTest(APITestCase):
         self.assertEqual(response.content,
                          b'{"error":"Not Found","description":"User matching query does not exist."}')
 
-    def test_bad_request_create_comment_place_do_not_exists(self):
+    def test_bad_request_create_rating_place_do_not_exists(self):
         base_url = "http://127.0.0.1:8000/api"
 
         data = {
@@ -495,7 +495,7 @@ class RatingTest(APITestCase):
         self.assertEqual(response.content,
                          b'{"error":"Not Found","description":"Place matching query does not exist."}')
 
-    def test_get_comment(self):
+    def test_get_rating(self):
         base_url = "http://127.0.0.1:8000/api"
         data = {
             "username": "tom",
@@ -528,7 +528,7 @@ class RatingTest(APITestCase):
             f'{base_url}/rating?place_id={response.data["id"]}', format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_not_found_get_non_existent_comment(self):
+    def test_not_found_get_non_existent_rating(self):
         base_url = "http://127.0.0.1:8000/api"
         data = {
             "username": "tom",
