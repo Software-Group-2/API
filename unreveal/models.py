@@ -24,7 +24,7 @@ class Rating(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, auto_created=True)
     place_id = models.CharField(max_length=100)
     email = models.CharField(max_length=100)
-    rating = models.DecimalField(max_digits = 5,decimal_places = 2)
+    rating = models.DecimalField(max_digits = 2,decimal_places = 1)
 
 
 class ErrorResponse(models.Model):
