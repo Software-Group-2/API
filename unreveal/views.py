@@ -322,7 +322,7 @@ class RatingView(APIView):
         responses={201: serializer_class(many=True), 404: ErrorResponseSerializer}
     )
     def get(self, request, format=None):
-        """get request to get the comments of a post given the post id"""
+        """get request to get the ratings of a post given the place id"""
         try:
             place_id = self.request.query_params.get('place_id')
             rating_places = Rating.objects.filter(place_id=place_id)
