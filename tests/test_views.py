@@ -209,6 +209,59 @@ class Place(APITestCase):
                          b'{"error":"Bad Request","description":"user is not logged in"}')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+    def test_find_place(self):
+        base_url = "http://127.0.0.1:8000/api"
+        data = {
+            "username": "tom",
+            "email": "benny@gmail.com",
+            "password": "unreveal"
+        }
+
+        self.client.post(f'{base_url}/user', data, format='json')
+
+        data = {
+            "email": "benny@gmail.com",
+            "latitude": "48.18765064595524",
+            "longitude": "16.312395393454587",
+            "name": "wien 2",
+            "description": "best caffee in berlin",
+            "label": "caffe;relax;fun",
+        }
+        
+        response = self.client.post(f'{base_url}/place', data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        data = {
+            "email": "benny@gmail.com",
+            "latitude": "48.2121594130154",
+            "longitude": "15.628637887792896",
+            "name": "st. polten",
+            "description": "best caffee in berlin",
+            "label": "caffe;relax;fun",
+        }
+        
+        response = self.client.post(f'{base_url}/place', data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        data = {
+            "email": "benny@gmail.com",
+            "latitude": "48.19158945620105",
+            "longitude": "16.379863310872935",
+            "name": "wien 1",
+            "description": "best caffee in berlin",
+            "label": "caffe;relax;fun",
+        }
+
+        response = self.client.post(f'{base_url}/place', data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        response = self.client.get(
+            f'{base_url}/place?latitude={response.data["latitude"]}&longitude={response.data["longitude"]}&range=10000', format='json')
+        #range = 10000 = 10km
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("wien 1",response.content.decode("utf-8"))
+        self.assertIn("wien 2",response.content.decode("utf-8"))
+
 
 class CommentTest(APITestCase):
     def test_create_comment(self):

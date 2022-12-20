@@ -171,6 +171,44 @@ class Logout(APIView):
 class PlaceView(APIView):
     serializer_class = PlaceSerializer
 
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter('longitude', openapi.IN_PATH, type=openapi.TYPE_STRING),
+            openapi.Parameter('latitude', openapi.IN_PATH, type=openapi.TYPE_STRING),
+            openapi.Parameter('range', openapi.IN_PATH, type=openapi.TYPE_STRING),],
+        responses={201: serializer_class(many=True), 404: ErrorResponseSerializer}
+    )
+    def get(self, request, format=None):
+        """get request to get the place of a given longitude,latitude and range(meters)"""
+        try:
+            longitude = self.request.query_params.get('longitude')
+            latitude = self.request.query_params.get('latitude')
+            distance = self.request.query_params.get('range')
+            distance_meters = float(distance) * 0.00001
+            places_table = []
+            for row in Place.objects.all():
+                if (float(row.latitude)-float(distance_meters) <= float(latitude) 
+                and float(row.latitude)+float(distance_meters) >= float(latitude)):
+                    if (float(row.longitude)-float(distance_meters) <= float(longitude) 
+                    and float(row.longitude)+float(distance_meters) >= float(longitude)):
+                        places_table.append(row)
+            places = []
+            for i in places_table:
+                places.append(PlaceSerializer(i).data)
+  
+
+            return Response(
+                places,
+                status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            print(e)
+            return Response({
+                'error': 'Bad Request',
+                'description': 'No register with this id in Database'
+            }, status=status.HTTP_404_NOT_FOUND)
+
+
     @swagger_auto_schema(request_body=PlaceSerializer,
                          responses={201: PlaceSerializer,
                                     400: ErrorResponseSerializer
