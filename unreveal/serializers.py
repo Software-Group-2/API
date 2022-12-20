@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Place, Comment, ErrorResponse, SuccessResponse
+from .models import Place, Comment, ErrorResponse, SuccessResponse, Rating
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -51,3 +51,9 @@ class SuccessResponseSerializer(serializers.ModelSerializer):
     class Meta:
         model = SuccessResponse
         fields = ['message', 'description']
+
+
+class RatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rating
+        fields = ['id', 'place_id', 'email', 'rating']
