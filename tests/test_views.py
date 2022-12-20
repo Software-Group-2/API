@@ -259,7 +259,8 @@ class Place(APITestCase):
             f'{base_url}/place?latitude={response.data["latitude"]}&longitude={response.data["longitude"]}&range=10000', format='json')
         #range = 10000 = 10km
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.content.decode("utf-8").strip('[]').split('},{')),2)
+        self.assertIn("wien 1",response.content.decode("utf-8"))
+        self.assertIn("wien 2",response.content.decode("utf-8"))
 
 
 class CommentTest(APITestCase):
