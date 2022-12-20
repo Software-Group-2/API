@@ -364,6 +364,8 @@ class RatingView(APIView):
             place_id = serializer.data.get('place_id')
             email = serializer.data.get('email')
             rating = serializer.data.get('rating')
+            if float(rating) > 5 or float(rating) < 0:
+                raise Exception
 
             User.objects.get(email=email)
             Place.objects.get(id=place_id)

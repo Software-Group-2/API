@@ -552,3 +552,33 @@ class RatingTest(APITestCase):
         response = self.client.get(
             f'{base_url}/rating?place_id={response.data["id"]}', format='json')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_bad_request_create_rating_above_five_belove_zero(self):
+        base_url = "http://127.0.0.1:8000/api"
+
+        data = {
+            "username": "tom",
+            "email": "benny@gmail.com",
+            "password": "unreveal"
+        }
+
+        self.client.post(f'{base_url}/user', data, format='json')
+
+        data = {
+            "place_id": uuid.uuid1(),
+            "email": "benny@gmail.com",
+            "rating": 8,
+        }
+
+        response = self.client.post(f'{base_url}/rating', data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        data = {
+            "place_id": uuid.uuid1(),
+            "email": "benny@gmail.com",
+            "rating": -1,
+        }
+
+        response = self.client.post(f'{base_url}/rating', data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        
