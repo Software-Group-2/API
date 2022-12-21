@@ -95,6 +95,7 @@ class Login(APIView):
             user_object = User.objects.get(email=email)
             match_check = check_password(password, user_object.password)
             if match_check:
+                self.request.session['member_id'] = []
                 session = self.request.session['member_id']
                 if isinstance(session, int):
                     session = [session]
@@ -104,7 +105,7 @@ class Login(APIView):
                         'message': 'OK',
                         'description': 'You are logged in'
                     },
-                    status=status.HTTP_200_OK
+                    status=status.HTTP_201_CREATED
                 )
             raise AttributeError
 
