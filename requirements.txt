@@ -33,7 +33,7 @@ platformdirs==2.5.4
 pluggy==1.0.0
 pycodestyle==2.10.0
 PyJWT==2.6.0
-pylint==2.15.7
+pylint==2.16.1
 pylint-django==2.5.3
 pylint-plugin-utils==0.7
 pyparsing==3.0.9
